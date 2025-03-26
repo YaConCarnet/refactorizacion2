@@ -1,12 +1,11 @@
 package sistema;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
 
 public class SistemaReservasDeportivas {
 	
-	private List<Reserva> reservas;
-	private boolean[] iluminacion;
+	GestionarIluminacion data = new GestionarIluminacion();
 	private static final int MAX_PISTAS = 10; // Asumimos un máximo de 10 pistas
 
 	    /**
@@ -15,9 +14,9 @@ public class SistemaReservasDeportivas {
 
 	    public SistemaReservasDeportivas() {
 
-	        reservas = new ArrayList<>();
+	        data.reservas = new ArrayList<>();
 
-	        iluminacion = new boolean[MAX_PISTAS];
+	        data.iluminacion = new boolean[getMaxPistas()];
 
 	    }
 
@@ -31,25 +30,25 @@ public class SistemaReservasDeportivas {
 
 	        int idPista = reserva.getIdPista();
 
-	        String fecha = reserva.getFecha();
+	        LocalDateTime fecha = reserva.getFecha();
 
-	        if (idPista < 0 || idPista >= MAX_PISTAS) {
+	        if (idPista < 0 || idPista >= getMaxPistas()) {
 
-	            return false; // ID de pista inválido
+	            return false;
 
 	        }
 
-	        for (Reserva r : reservas) {
+	        for (Reserva r : data.reservas) {
 
 	            if (r.getIdPista() == idPista && r.getFecha().equals(fecha)) {
 
-	                return false; // La pista ya está reservada en esa fecha
+	                return false;
 
 	            }
 
 	        }
 
-	        reservas.add(reserva);
+	        data.reservas.add(reserva);
 
 	        return true;
 
@@ -63,11 +62,11 @@ public class SistemaReservasDeportivas {
 
 	    public boolean cancelarReserva(int idReserva) {
 
-	        for (int i = 0; i < reservas.size(); i++) {
+	        for (int i = 0; i < data.reservas.size(); i++) {
 
-	            if (reservas.get(i).getIdPista() == idReserva) {
+	            if (data.reservas.get(i).getIdPista() == idReserva) {
 
-	                reservas.remove(i);
+	                data.reservas.remove(i);
 
 	                return true;
 
@@ -80,46 +79,6 @@ public class SistemaReservasDeportivas {
 	    }
 
 	    /**
-	     * Enciende las luces de una pista
-	     * @param idPista identificador de la pista de la que se desea encender las luces
-	     * @return true si las luces se ha encendido correctamente, false si es inválido
-	     */
-
-	    public boolean encenderLuces(int idPista) {
-
-	        if (idPista < 0 || idPista >= MAX_PISTAS) {
-
-	            return false; // ID de pista inválido
-
-	        }
-
-	        iluminacion[idPista] = true;
-
-	        return true;
-
-	    }
-
-	    /**
-	     * Apaga las luces de una pista
-	     * @param idPista identificador de la pista de la que se desea apagar las luces
-	     * @return true si las luces se han apagado correctamente, false si es inválido
-	     */
-
-	    public boolean apagarLuces(int idPista) {
-
-	        if (idPista < 0 || idPista >= MAX_PISTAS) {
-
-	            return false; // ID de pista inválido
-
-	        }
-
-	        iluminacion[idPista] = false;
-
-	        return true;
-
-	    }
-
-	    /**
 	     * Verifica la disponibilidad de una pista en una fecha y hora concreta
 	     * @param idPista de la pista
 	     * @param fecha en la que se desea verificar la disponibilidad
@@ -127,26 +86,41 @@ public class SistemaReservasDeportivas {
 	     * @return true si la pista está disponible, false si ya está reservada en esa fecha
 	     */
 
-	    public boolean verificarDisponibilidad(int idPista, String fecha, String hora) {
+	    public boolean verificarDisponibilidad(int idPista, LocalDateTime fecha, String hora) {
 
-	        if (idPista < 0 || idPista >= MAX_PISTAS) {
-
-	            return false; // ID de pista inválido
-
+	    	if (idPista < 0 || idPista >= getMaxPistas()) {
+	    		
+	            return false;
+	            
 	        }
 
-	        for (Reserva r : reservas) {
-
-	            if (r.getIdPista() == idPista && r.getFecha().equals(fecha)) {
-
-	                return false; // La pista no está disponible en esa fecha
-
-	            }
-
-	        }
-
-	        return true; // La pista está disponible
+	        return esFechaDisponible(idPista, fecha);
 
 	    }
+	    
+	    /**
+	     * Verifica si una fecha y pista están disponibles para una reserva
+	     * @param idPista de la pista
+	     * @param fecha en la que se desea verificar la disponibilidad
+	     * @return true si la pista está disponible, false si ya está reservada en esa fecha
+	     */
+	    
+	    private boolean esFechaDisponible(int idPista, LocalDateTime fecha) {
+	        
+	    	for (Reserva r : data.reservas) {
+	            if (r.getIdPista() == idPista && r.getFecha().equals(fecha)) {
+	                return false; // La pista no está disponible en esa fecha
+	            }
+	        
+	        }
+	        
+	        return true; // La pista está disponible
+	        
+	    }
+
+		public static int getMaxPistas() {
+			return MAX_PISTAS;
+		}
+
 
 }

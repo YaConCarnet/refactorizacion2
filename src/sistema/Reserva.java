@@ -1,9 +1,11 @@
 package sistema;
 
+import java.time.LocalDateTime;
+
 public class Reserva {
 	
 	private int idPista;
-    private String fecha;
+    private LocalDateTime fecha;
     private int duracion;
 
     /**
@@ -13,7 +15,7 @@ public class Reserva {
      * @param duracion de la reserva en minutos
      */
 
-    public Reserva(int idPista, String fecha, int duracion) {
+    public Reserva(int idPista, LocalDateTime fecha, int duracion) {
 
     	this.idPista = idPista;
 
@@ -29,7 +31,7 @@ public class Reserva {
 
     }
 
-    public String getFecha() {
+    public LocalDateTime getFecha() {
 
         return fecha;
 
